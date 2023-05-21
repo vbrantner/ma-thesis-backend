@@ -15,7 +15,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 512)
 async def take_img():
     ret, frame = cap.read()
     # encode the frame as a JPEG image
-    _, jpeg = cv2.imencode(".png", frame)
+    _, jpeg = cv2.imencode(".jpg", frame)
 
     # convert the JPEG image to a base64-encoded string
     jpeg_bytes = jpeg.tobytes()
