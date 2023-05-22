@@ -1,6 +1,4 @@
-import base64
 import json
-import time
 
 import cv2
 from flask import Flask, Response
