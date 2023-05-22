@@ -10,30 +10,26 @@ app = Flask(__name__)
 CORS(app, support_credentials=True)
 
 
-def generate():
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-
+def capture_frame():
+    camera = cv2.VideoCapture(0)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     while True:
-        ret, frame = cap.read()
-        if ret:
-            ret, jpeg = cv2.imencode('.jpg', frame)
-            b64_bytes = base64.b64encode(jpeg)
-            b64_string = b64_bytes.decode("utf-8")
-            if ret:
-                data = {
-                    "imgData": b64_string,
-                    "timestamp": time.time(),
-                    "testData": "your_test_data_here"
-                }
-                json_data = json.dumps(data).encode()
-                yield json_data
+        success, frame = camera.read()
+        if not success:
+            break
+        # Convert the frame to JPEG format
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+    camera.release()
 
 
-@app.route('/')
+@app.route('/video_feed')
 def video_feed():
-    return Response(generate(), mimetype='application/json')
+    return Response(capture_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/test')

@@ -8,8 +8,8 @@ import cv2
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FPS, 40)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 512)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 512)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
 
 
 async def take_img():
