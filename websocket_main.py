@@ -1,6 +1,5 @@
 import base64
 import asyncio
-import datetime
 import sys
 import time
 import websockets
@@ -9,8 +8,8 @@ import cv2
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FPS, 40)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
 
 
 async def take_img():
@@ -40,10 +39,9 @@ async def handler(websocket, path):
             elapsed_time_ms = (end_time - start_time) * 1000
             print(
                 f'take_img fn took {elapsed_time_ms:.2f} to execute')
-            timestamp = datetime.datetime.now()
+
+            await websocket.send(str(data))
             # await asyncio.sleep(1)
-            # await websocket.send(str([data, datetime.datetime.now()]))
-            await websocket.send(str(f"{data}, {timestamp}"))
 
     except websockets.exceptions.ConnectionClosed:
         print('Client disconnected')
