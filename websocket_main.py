@@ -1,31 +1,38 @@
-import base64
 import asyncio
+import base64
+import datetime
 import sys
 import time
-import websockets
-import cv2
 
+import cv2
+import websockets
+from turbojpeg import (TJFLAG_FASTDCT, TJFLAG_FASTUPSAMPLE, TJFLAG_PROGRESSIVE,
+                       TJPF_GRAY, TJSAMP_GRAY, TurboJPEG)
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FPS, 40)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
+JPEG = TurboJPEG()
 
 
 async def take_img():
     ret, frame = cap.read()
+    jpeg = JPEG.encode(frame, quality=80, jpeg_subsample=2)
+    encoded_frame = base64.b64encode(jpeg).decode('utf-8')
+
     # encode the frame as a JPEG image
-    _, jpeg = cv2.imencode(".jpg", frame)
+    # _, jpeg = cv2.imencode(".jpg", frame)
 
     # convert the JPEG image to a base64-encoded string
-    jpeg_bytes = jpeg.tobytes()
-    b64_bytes = base64.b64encode(jpeg_bytes)
-    b64_string = b64_bytes.decode("utf-8")
-    size = round(sys.getsizeof(b64_bytes) / (1024 * 1024) * 100) / 100
-    print(f'size of img is {size}')
+    # jpeg_bytes = jpeg.tobytes()
+    # b64_bytes = base64.b64encode(jpeg_bytes)
+    # b64_string = b64_bytes.decode("utf-8")
+    # size = round(sys.getsizeof(b64_bytes) / (1024 * 1024) * 100) / 100
+    # print(f'size of img is {size}')
 
     # send the base64-encoded string over the WebSocket
-    return b64_string
+    return encoded_frame
 
 
 async def handler(websocket, path):
