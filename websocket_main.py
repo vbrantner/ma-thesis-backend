@@ -10,29 +10,28 @@ from turbojpeg import TurboJPEG
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FPS, 40)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 512)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 512)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 768)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 576)
 JPEG = TurboJPEG()
 
 
 async def take_img():
     ret, frame = cap.read()
-    
-    jpeg = JPEG.encode(frame, quality=80, jpeg_subsample=2)
-    encoded_frame = base64.b64encode(jpeg).decode('utf-8')
+
+    # jpeg = JPEG.encode(frame, quality=80, jpeg_subsample=2)
+    # encoded_frame = base64.b64encode(jpeg).decode('utf-8')
 
     # encode the frame as a JPEG image
-    #_, jpeg = cv2.imencode(".jpg", frame)
+    _, jpeg = cv2.imencode(".jpg", frame)
     # convert the JPEG image to a base64-encoded string
-    #jpeg_bytes = jpeg.tobytes()
-    #b64_bytes = base64.b64encode(jpeg_bytes)
-    #b64_string = b64_bytes.decode("utf-8")
-    #size = round(sys.getsizeof(b64_bytes) / (1024 * 1024) * 100) / 100
-    #print(f'size of img is {size}')
-  
+    jpeg_bytes = jpeg.tobytes()
+    b64_bytes = base64.b64encode(jpeg_bytes)
+    b64_string = b64_bytes.decode("utf-8")
+    size = round(sys.getsizeof(b64_bytes) / (1024 * 1024) * 100) / 100
+    print(f'size of img is {size}')
 
     # send the base64-encoded string over the WebSocket
-    return encoded_frame
+    return b64_string
 
 
 async def handler(websocket, path):
@@ -47,9 +46,9 @@ async def handler(websocket, path):
             print(
                 f'take_img fn took {elapsed_time_ms:.2f} to execute')
 
-            timestamp = datetime.datetime.now()
+            timestamp = datetime.datetime.now(datetime.timezone.utc)
+            print(timestamp)
             await websocket.send(str(f"{data}, {timestamp}"))
-            # await asyncio.sleep(1)
 
     except websockets.exceptions.ConnectionClosed:
         print('Client disconnected')
