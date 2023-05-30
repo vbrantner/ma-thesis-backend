@@ -10,8 +10,8 @@ CORS(app, support_credentials=True)
 
 def capture_frame():
     camera = cv2.VideoCapture(0)
-    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
-    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     while True:
         success, frame = camera.read()
         if not success:
