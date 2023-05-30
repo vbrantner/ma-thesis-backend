@@ -1,0 +1,1 @@
+const cv = require('@u4/opencv4nodejs');
