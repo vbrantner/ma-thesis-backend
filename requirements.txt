@@ -5,3 +5,4 @@ flask_cors
 aiortc
 flask-socketio
 PyTurboJPEG
+av
