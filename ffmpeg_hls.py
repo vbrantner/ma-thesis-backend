@@ -1,14 +1,16 @@
-from flask import Flask, send_from_directory
+from flask import Flask, render_template, send_from_directory
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-OUTPUT_DIR = "/Users/vinzenz/Code/ma-thesis-backend/stream"
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-
-@app.route('/stream')
-def stream():
-    return send_from_directory(OUTPUT_DIR, 'stream.m3u8')
-
+@app.route('/stream/<path:path>')
+def stream(path):
+    return send_from_directory('/home/vinzenz/ma-thesis-backend/stream', path)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000)
+      app.run(host='0.0.0.0', port='3000', debug=True)
